@@ -6,9 +6,14 @@ to the [Good Data Trials](https://gooddata.com/trial) page.
 
 ### Running the scripts
 
-Set the environment variable `AUTHORIZATION_TOKEN` to the token you were provided 
-when you registered for your trial account. Ex:
+First, run 
 
-```$AUTHORIZATION_TOKEN={token} ./01_prepare_workspace.rb "GoodData Project Title" data```
+```gooddata auth store```
+
+... to configure the SDK with credentials created turing the trial account registration. Enter `https://trial.na.gooddata.com` when prompted for server.
+
+Then you can run:
+
+```./01_prepare_workspace.rb "GoodData Project Title"```
 
 Please see the tutorials for more information.
