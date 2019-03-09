@@ -46,7 +46,7 @@ begin
   }]
 
   result = project.upload_multiple(data, blueprint)
-rescue => e
+rescue RestClient::Exception => e
   response = JSON.parse e.response.body
   raise response['error']['message'] % response['error']['parameters']
 end
