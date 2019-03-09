@@ -2,9 +2,9 @@
 
 require 'gooddata'
 
-GoodData.logging_http_on
+GoodData.logging_http_on if ENV['HTTP_DEBUG']
 
-project_title = ARGV.shift || die("Usage: #{$0} <project_title> [<data_folder>]")
+project_title = ARGV.shift || raise("Usage: #{$0} <project_title> [<data_folder>]")
 data_folder   = ARGV.shift || './data/step1'
 
 def add_attribute(dataset, identifier_suffix, options = {})
@@ -32,8 +32,9 @@ blueprint = GoodData::Model::ProjectBlueprint.build(project_title) do |p|
   end
 end
 
-client = GoodData.connect # reads credentials from ~/.gooddata
-project = ENV['WORKSPACE'] ? client.projects(ENV['WORKSPACE']) : client.create_project_from_blueprint(blueprint, auth_token: ENV['AUTHORIZATION_TOKEN'])
+client  = GoodData.connect # reads credentials from ~/.gooddata
+options = ENV['AUTHORIZATION'] ? { auth_token: ENV['AUTHORIZATION_TOKEN'] } : {}
+project = ENV['WORKSPACE'] ? client.projects(ENV['WORKSPACE']) : client.create_project_from_blueprint(blueprint, options)
 
 data = [{
   data: "#{data_folder}/orders.csv",

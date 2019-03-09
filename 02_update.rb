@@ -2,10 +2,10 @@
 
 require 'gooddata'
 
-GoodData.logging_http_on
+GoodData.logging_http_on if ENV['HTTP_DEBUG']
 
-project_id    = ARGV.shift || die("Usage: #{$0} <project_id> [<data_folder>]")
-data_folder   = ARGV.shift || '.'
+project_id    = ARGV.shift || raise("Usage: #{$0} <project_id> [<data_folder>]")
+data_folder   = ARGV.shift || './data/step1'
 
 def add_attribute(dataset, identifier_suffix, options = {})
   attr_id = "attr.#{identifier_suffix}"
