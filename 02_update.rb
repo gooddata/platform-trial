@@ -41,8 +41,14 @@ blueprint = GoodData::Model::ProjectBlueprint.build(project_id) do |p|
 end
 
 client = GoodData.connect # reads credentials from ~/.gooddata
-GoodData.use project_id
-GoodData.project.update_from_blueprint(blueprint, cascade_drops: false, preserve_data: false)
+
+begin
+  GoodData.use project_id
+  GoodData.project.update_from_blueprint(blueprint, cascade_drops: false, preserve_data: false)
+raise => e
+  response = JSON.parse e.response.body
+  raise response['error']['message'] % response['error']['parameters']
+end
 
 # data = [{
 #   data: "#{data_folder}/orders_tut_001_columns.csv",

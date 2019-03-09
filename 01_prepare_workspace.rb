@@ -34,13 +34,21 @@ end
 
 client  = GoodData.connect # reads credentials from ~/.gooddata
 options = ENV['AUTHORIZATION'] ? { auth_token: ENV['AUTHORIZATION_TOKEN'] } : {}
-project = ENV['WORKSPACE'] ? client.projects(ENV['WORKSPACE']) : client.create_project_from_blueprint(blueprint, options)
 
-data = [{
-  data: "#{data_folder}/orders.csv",
-  dataset: 'dataset.orderlines'
-}]
+pp options
 
-result = project.upload_multiple(data, blueprint)
+begin
+  project = ENV['WORKSPACE'] ? client.projects(ENV['WORKSPACE']) : client.create_project_from_blueprint(blueprint, options)
+
+  data = [{
+    data: "#{data_folder}/orders.csv",
+    dataset: 'dataset.orderlines'
+  }]
+
+  result = project.upload_multiple(data, blueprint)
+rescue => e
+  response = JSON.parse e.response.body
+  raise response['error']['message'] % response['error']['parameters']
+end
 pp result
 puts "Done!"
