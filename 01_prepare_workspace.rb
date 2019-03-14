@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
+# (C) 2007-2019 GoodData Corporation
+
+# Script for creating and loading the initial data model for
+# GoodData platform tutorial.
+#
+# See https://developer.gooddata.com/platform-tutorial
 
 require 'gooddata'
 
@@ -13,6 +19,8 @@ def add_attribute(dataset, identifier_suffix, options = {})
   dataset.add_label("label.#{identifier_suffix}", options.merge({ reference: attr_id }))
 end
 
+# Define the logical data model in terms of attributes, date dimensions
+# and facts.
 blueprint = GoodData::Model::ProjectBlueprint.build(project_title) do |p|
   p.add_date_dimension('date', title: 'Date')
 

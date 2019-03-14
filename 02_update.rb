@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
+# (C) 2007-2019 GoodData Corporation
+
+# Script for refactoring and reloading the data model from the
+# GoodData platform tutorial.
+#
+# See https://developer.gooddata.com/platform-tutorial
 
 require 'gooddata'
 
@@ -13,6 +19,11 @@ def add_attribute(dataset, identifier_suffix, options = {})
   dataset.add_label("label.#{identifier_suffix}", options.merge({ reference: attr_id }))
 end
 
+# Define the updated logical data model. The new data model uses the
+# the same attribute and fact identifiers even though some of them
+# are moved to new data sets (e.g. orderlines.product_id).
+# In addition, it creates new data elements for the marketing campaign
+# data.
 blueprint = GoodData::Model::ProjectBlueprint.build(project_id) do |p|
   p.add_date_dimension('date', title: 'Date')
 
@@ -44,12 +55,13 @@ client = GoodData.connect # reads credentials from ~/.gooddata
 
 begin
   GoodData.use project_id
-  GoodData.project.update_from_blueprint(blueprint, cascade_drops: false, preserve_data: false)
-raise => e
+  GoodData.project.update_from_blueprint(blueprint, update_preference: { cascade_drops: false, preserve_data: false })
+rescue RestClient::Exception => e
   response = JSON.parse e.response.body
   raise response['error']['message'] % response['error']['parameters']
 end
 
+# TODO - Work in progress!
 # data = [{
 #   data: "#{data_folder}/orders_tut_001_columns.csv",
 #   dataset: 'dataset.orders'
