@@ -13,6 +13,9 @@ GoodData.logging_http_on if ENV['HTTP_DEBUG']
 project_title = ARGV.shift || raise("Usage: #{$0} <project_title> [<data_folder>]")
 data_folder   = ARGV.shift || './data/step1'
 
+# Each attribute in this demo has just one visual representation (label)
+# The "anchor" option signifies that the attribute also acts as a referencable
+# primary key
 def add_attribute(dataset, identifier_suffix, options = {})
   attr_id = "attr.#{identifier_suffix}"
   options[:anchor] ? dataset.add_anchor(attr_id, options) : dataset.add_attribute(attr_id, options)
@@ -24,7 +27,7 @@ end
 blueprint = GoodData::Model::ProjectBlueprint.build(project_title) do |p|
   p.add_date_dimension('date', title: 'Date')
 
-  p.add_dataset('dataset.orderlines', title: "Order Lines") do |d|
+  p.add_dataset('dataset.order_lines', title: "Order Lines") do |d|
     add_attribute(d, "orderlines.order_line_id", title: "Order Line ID", anchor: true )
     add_attribute(d, "orderlines.order_id", title: "Order ID")
     d.add_date('date', format: 'yyyy-MM-dd')
@@ -49,8 +52,8 @@ begin
   project = ENV['WORKSPACE'] ? client.projects(ENV['WORKSPACE']) : client.create_project_from_blueprint(blueprint, options)
 
   data = [{
-    data: "#{data_folder}/orders.csv",
-    dataset: 'dataset.orderlines'
+    data: "#{data_folder}/order_lines.csv",
+    dataset: 'dataset.order_lines'
   }]
 
   result = project.upload_multiple(data, blueprint)
