@@ -1,5 +1,5 @@
-# GoodData Developer Tutorials
+# GoodData Developer Trials
 
 This project contains scripts and data for the GoodData platform 
-tutorial. For more information, please go
+trial. For more information, please go
 to https://developer.gooddata.com/tutorials/getting-started
