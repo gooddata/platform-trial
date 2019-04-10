@@ -24,7 +24,7 @@ end
 
 # Define the updated logical data model. The new data model uses the
 # the same attribute and fact identifiers even though some of them
-# are moved to new data sets (e.g. orderlines.product_id).
+# are moved to new data sets (e.g. csv_order_lines.product_id).
 # In addition, it creates new data elements for the marketing campaign
 # data.
 blueprint = GoodData::Model::ProjectBlueprint.build(project_id) do |p|
@@ -36,15 +36,15 @@ blueprint = GoodData::Model::ProjectBlueprint.build(project_id) do |p|
   # customer or procuct information to stay the same while referencing columns
   # from different data sets (tables).
   p.add_dataset('dataset.customers', title: "Customers") do |d|
-    add_attribute(d, "orderlines.customer_id", title: "Customer ID", anchor: true)
-    add_attribute(d, "orderlines.fullname", title: "Customer Name")
-    add_attribute(d, "orderlines.state", title: "Customer State")
+    add_attribute(d, "csv_order_lines.customer_id", title: "Customer ID", anchor: true)
+    add_attribute(d, "csv_order_lines.customer_name", title: "Customer Name")
+    add_attribute(d, "csv_order_lines.state", title: "Customer State")
   end
 
   p.add_dataset('dataset.products', title: "Products") do |d|
-    add_attribute(d, "orderlines.product_id", title: "Product ID", anchor: true)
-    add_attribute(d, "orderlines.product_name", title: "Product")
-    add_attribute(d, "orderlines.category", title: "Product Category")    
+    add_attribute(d, "csv_order_lines.product_id", title: "Product ID", anchor: true)
+    add_attribute(d, "csv_order_lines.product_name", title: "Product")
+    add_attribute(d, "csv_order_lines.category", title: "Product Category")    
   end
 
   p.add_dataset('dataset.campaigns', title: "Campaigns") do |d|
@@ -61,17 +61,17 @@ blueprint = GoodData::Model::ProjectBlueprint.build(project_id) do |p|
     d.add_fact("fact.campaign_channels.spend", title: "Spend")
   end
 
-  p.add_dataset('dataset.order_lines', title: "Order Lines") do |d|
-    add_attribute(d, "orderlines.order_line_id", title: "Order Line ID", anchor: true )
-    add_attribute(d, "orderlines.order_id", title: "Order ID")
+  p.add_dataset('dataset.csv_order_lines', title: "Order Lines") do |d|
+    add_attribute(d, "csv_order_lines.order_line_id", title: "Order Line ID", anchor: true )
+    add_attribute(d, "csv_order_lines.order_id", title: "Order ID")
     d.add_date('date', format: 'yyyy-MM-dd')
-    add_attribute(d, "orderlines.order_status", title: "Order Status")
+    add_attribute(d, "csv_order_lines.order_status", title: "Order Status")
     # The product and customer attributes have been replaced with references to the newly created Products and Customers dimension
     d.add_reference("dataset.products")
     d.add_reference("dataset.customers")
     d.add_reference("dataset.campaigns")
-    d.add_fact("fact.orderlines.price", title: "Price")
-    d.add_fact("fact.orderlines.quantity", title: "Quantity")
+    d.add_fact("fact.csv_order_lines.price", title: "Price")
+    d.add_fact("fact.csv_order_lines.quantity", title: "Quantity")
   end
 end
 
@@ -84,6 +84,8 @@ begin
   else
     GoodData.use project_id
     project = GoodData.project
+    # eject data sets created through the CSV Uploader
+    project.datasets.each { |ds| ds.meta['isProduction'] = 1; ds.save }
     GoodData.project.update_from_blueprint(blueprint, update_preference: { cascade_drops: false, preserve_data: false })
   end
 
@@ -99,7 +101,7 @@ begin
       dataset: 'dataset.campaigns'
     }, {
       data: "#{data_folder}/order_lines.csv",
-      dataset: 'dataset.order_lines'
+      dataset: 'dataset.csv_order_lines'
     }, {
       data: "#{data_folder}/campaign_channels.csv",
       dataset: 'dataset.campaign_channels'

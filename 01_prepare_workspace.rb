@@ -27,19 +27,19 @@ end
 blueprint = GoodData::Model::ProjectBlueprint.build(project_title) do |p|
   p.add_date_dimension('date', title: 'Date')
 
-  p.add_dataset('dataset.order_lines', title: "Order Lines") do |d|
-    add_attribute(d, "orderlines.order_line_id", title: "Order Line ID", anchor: true )
-    add_attribute(d, "orderlines.order_id", title: "Order ID")
+  p.add_dataset('dataset.csv_order_lines', title: "Order Lines") do |d|
+    add_attribute(d, "csv_order_lines.order_line_id", title: "Order Line ID", anchor: true )
+    add_attribute(d, "csv_order_lines.order_id", title: "Order ID")
     d.add_date('date', format: 'yyyy-MM-dd')
-    add_attribute(d, "orderlines.order_status", title: "Order Status")
-    add_attribute(d, "orderlines.customer_id", title: "Customer ID")
-    add_attribute(d, "orderlines.fullname", title: "Customer Name")
-    add_attribute(d, "orderlines.state", title: "Customer State")
-    add_attribute(d, "orderlines.product_id", title: "Product ID")
-    add_attribute(d, "orderlines.product_name", title: "Product")
-    add_attribute(d, "orderlines.category", title: "Product Category")    
-    d.add_fact("fact.orderlines.price", title: "Price")
-    d.add_fact("fact.orderlines.quantity", title: "Quantity")
+    add_attribute(d, "csv_order_lines.order_status", title: "Order Status")
+    add_attribute(d, "csv_order_lines.customer_id", title: "Customer ID")
+    add_attribute(d, "csv_order_lines.customer_name", title: "Customer Name")
+    add_attribute(d, "csv_order_lines.state", title: "Customer State")
+    add_attribute(d, "csv_order_lines.product_id", title: "Product ID")
+    add_attribute(d, "csv_order_lines.product_name", title: "Product")
+    add_attribute(d, "csv_order_lines.category", title: "Product Category")    
+    d.add_fact("fact.csv_order_lines.price", title: "Price")
+    d.add_fact("fact.csv_order_lines.quantity", title: "Quantity")
   end
 end
 
@@ -51,12 +51,22 @@ pp options
 begin
   project = ENV['WORKSPACE'] ? client.projects(ENV['WORKSPACE']) : client.create_project_from_blueprint(blueprint, options)
 
-  data = [{
-    data: "#{data_folder}/order_lines.csv",
-    dataset: 'dataset.order_lines'
-  }]
+  column_mapping = {
+    'label.csv_order_lines.order_line_id': 'order_line_id',
+    'label.csv_order_lines.order_id':      'order_id',
+    'date': 'date',
+    'label.csv_order_lines.order_status':  'order_status',
+    'label.csv_order_lines.customer_id':   'customer_id',
+    'label.csv_order_lines.customer_name': 'customer_name',
+    'label.csv_order_lines.state':         'state',
+    'label.csv_order_lines.product_id':    'product_id',
+    'label.csv_order_lines.product_name':  'product_name',
+    'label.csv_order_lines.category':      'category',
+    'fact.csv_order_lines.price':          'price',
+    'fact.csv_order_lines.quantity':       'quantity'
+  }
 
-  result = project.upload_multiple(data, blueprint)
+  result = project.upload("#{data_folder}/order_lines.csv", blueprint, 'dataset.csv_order_lines', column_mapping: column_mapping)
 rescue RestClient::Exception => e
   response = JSON.parse e.response.body
   raise response['error']['message'] % response['error']['parameters']

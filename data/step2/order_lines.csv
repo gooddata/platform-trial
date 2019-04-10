@@ -1,4 +1,4 @@
-label.orderlines.order_line_id,label.orderlines.order_id,label.orderlines.order_status,date,dataset.campaigns,dataset.customers,dataset.products,fact.orderlines.price,fact.orderlines.quantity
+label.csv_order_lines.order_line_id,label.csv_order_lines.order_id,label.csv_order_lines.order_status,date,dataset.campaigns,dataset.customers,dataset.products,fact.csv_order_lines.price,fact.csv_order_lines.quantity
 10668-9VYN74-2,10668-9VYN74,Cancelled,2016-07-12,,10668,210,100.33,1.00
 10697-7GBN87-1,10697-7GBN87,Cancelled,2017-12-05,,10697,310,39.35,1.00
 10907-0TPH53-3,10907-0TPH53,Cancelled,2015-03-28,10005,10907,220,50.40,1.00

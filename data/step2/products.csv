@@ -1,4 +1,4 @@
-label.orderlines.product_id,label.orderlines.product_name,label.orderlines.category
+label.csv_order_lines.product_id,label.csv_order_lines.product_name,label.csv_order_lines.category
 150,Skirt,Clothing
 210,Artego,Electronics
 240,PortaCode,Electronics

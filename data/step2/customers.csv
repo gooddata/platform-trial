@@ -1,4 +1,4 @@
-label.orderlines.customer_id,label.orderlines.fullname,label.orderlines.state
+label.csv_order_lines.customer_id,label.csv_order_lines.customer_name,label.csv_order_lines.state
 10692,"Abbe Mation",NY
 10907,"Addie Northey",OH
 10947,"Agnes Haslin",NY
