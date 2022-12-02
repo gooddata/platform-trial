@@ -1,3 +1,5 @@
+## :warning: This repository has been deprecated and the development of this project has been stopped. :warning:
+
 # GoodData Developer Trials
 
 This project contains scripts and data for the GoodData platform 
